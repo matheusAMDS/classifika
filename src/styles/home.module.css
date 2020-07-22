@@ -1,0 +1,20 @@
+.sider {
+  height: 100%;
+  max-height: 240px;
+}
+
+.menu {
+  height: 100%;
+}
+
+.publicities {
+  margin: 0 12px;
+}
+
+.no_publicities_message {
+  margin-left: 16px;
+}
+
+.spinner {
+  margin: 5vh auto;
+}
