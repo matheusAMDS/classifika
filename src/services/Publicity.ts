@@ -48,22 +48,3 @@ export function usePublicities(category:string, page:number) {
     error
   }
 }
-
-class PublicityServices {
-  static async show(id:string) {
-    return await api.get<Publicity>(`/publicity/${id}`) 
-  }
-
-  static async paths() {
-    const response = await api.get<APIResult>('/publicity')
-    const paths = response.data.publicities.map(publicity => ({
-      params: {
-        id: publicity._id
-      }
-    }))
-
-    return paths
-  }
-}
-
-export default PublicityServices

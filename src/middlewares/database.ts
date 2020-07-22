@@ -1,12 +1,12 @@
-import { MongoClient } from 'mongodb'
+import { MongoClient, Db } from 'mongodb'
 import url from 'url'
 import { NextApiResponse } from 'next'
 
 import { Request } from 'middlewares/_types'
 
-let cachedDb = null
+let cachedDb:Db = null
 
-export async function dbConnection() {
+export async function dbConnection(){
   if (cachedDb) 
     return cachedDb
 
