@@ -20,8 +20,9 @@
 
 .content {
   width: 100%;
-  max-width: 90vw;
-  margin: 5vh auto;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 8px;
 }
 
 .container {

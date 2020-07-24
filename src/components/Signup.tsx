@@ -42,6 +42,7 @@ const Signup:React.FC = () => {
       type="primary"
       handleSubmit={handleSubmit}
       className={layout.navbar_actions}
+      width="600px"
     >
       <Form
         form={form}

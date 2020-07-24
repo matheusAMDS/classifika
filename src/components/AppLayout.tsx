@@ -1,5 +1,6 @@
 import { Layout, Menu, Anchor, Button } from 'antd'
 import Link from 'next/link'
+import Head from 'next/head'
 import { useContext } from 'react'
 
 import Login from 'components/Login'
@@ -9,13 +10,21 @@ import NewPublicity from 'components/NewPublicity'
 import layout from 'styles/layout.module.css'
 import { AuthContext } from 'contexts/AuthContext'
 
+interface Props {
+  title?: string;
+}
+
 const { Content, Footer, Header } = Layout
 
-const AppLayout:React.FC = ({ children }) => {
+const AppLayout:React.FC<Props> = ({ children, title }) => {
   const { isLogged, logout } = useContext(AuthContext)
 
   return (
     <Layout className={layout.container}>
+      <Head>
+        <title>{title}</title>
+      </Head>
+      
       <Header className={layout.header}>
         <Link href="/">
           <h1 className={layout.logo}>

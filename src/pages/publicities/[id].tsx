@@ -53,7 +53,7 @@ const PublicityDetail:React.FC<Props> = ({ publicity }) => {
   const router = useRouter()
 
   return (
-    <AppLayout>
+    <AppLayout title={`Classifika | ${publicity && publicity.title}`}>
       { publicity && (
         <div className={publicityDetails.container}>
           <PageHeader

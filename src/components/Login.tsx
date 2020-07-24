@@ -42,6 +42,7 @@ const LogIn:React.FC = () => {
       label="Login"
       handleSubmit={handleSubmit}
       className={layout.navbar_actions}
+      width="600px"
     >
       <Form
         form={form}

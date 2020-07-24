@@ -43,7 +43,7 @@ const NewPublicity:React.FC = () => {
       handleSubmit={handleSubmit}
       className={layout.navbar_actions}
       closeAfterSubmit
-      width="50vw"
+      width="750px"
     >
       <Form
         form={form}

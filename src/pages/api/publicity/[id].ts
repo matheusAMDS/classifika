@@ -1,6 +1,7 @@
 import nc from 'next-connect'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ObjectId } from 'mongodb'
+import cors from 'cors'
 
 import db from 'middlewares/database'
 import { Request } from 'middlewares/_types'
@@ -8,6 +9,7 @@ import { Request } from 'middlewares/_types'
 const handler = nc<NextApiRequest, NextApiResponse>()
 
 handler.use(db)
+handler.use(cors())
 
 handler.get<Request, NextApiResponse>(async(req, res) => {
   const id = req.query.id

@@ -1,6 +1,7 @@
 import nc from 'next-connect'
 import { NextApiRequest, NextApiResponse } from 'next'
 import bcrypt from 'bcryptjs'
+import cors from 'cors'
 
 import db from 'middlewares/database'
 import { Request } from 'middlewares/_types'
@@ -10,6 +11,7 @@ import { generateToken } from 'middlewares/auth'
 const handler = nc<NextApiRequest,NextApiResponse>()
 
 handler.use(db)
+handler.use(cors())
 
 handler.post<Request, NextApiResponse>(async (req, res) => {
   const { name, email, password } = req.body

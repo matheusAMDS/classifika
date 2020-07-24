@@ -30,16 +30,17 @@ const Home:React.FC = () => {
   const category = router.query.category as string
   const page = Number(router.query.page) || 1
   const { publicities, isLoading, error, total } = usePublicities(category, page)
+  const title = `ClassifiKa ${category ? `| ${mapKeyToPlural(category)}` : ''}`
   
   if (error) console.log(error)
 
   return (
-    <AppLayout>
+    <AppLayout title={title}>
       <Layout className={layout.content} hasSider>
         <Sider 
           title="Categories" 
           className={home.sider}
-          breakpoint="sm"
+          breakpoint="md"
           collapsedWidth="0"
         >
           <Menu 
@@ -65,12 +66,7 @@ const Home:React.FC = () => {
           <Title level={2}>
             {mapKeyToPlural(category) || "Todos os anúncios"}
           </Title>
-          <Row 
-            gutter={[
-              { xs: 4, sm: 6, md: 10, lg: 16 }, 
-              { xs: 4, sm: 6, md: 10, lg: 16 }
-            ]}
-          >
+          <Row gutter={[16, 10]}>
             { isLoading ? <Spin size="large" className={home.spinner} /> : (
               publicities && (
               publicities.length === 0
@@ -83,7 +79,7 @@ const Home:React.FC = () => {
                     href='/publicities/[id]' 
                     as={`/publicities/${publicity._id}`}
                   >
-                    <Col xs={22} sm={17} md={16} lg={12} xl={8} >
+                    <Col xs={20} sm={12} md={12} lg={8} xl={8} xxl={6} className={home.col} >
                       <PublicityCard publicity={publicity} />
                     </Col>
                   </Link>
@@ -92,7 +88,8 @@ const Home:React.FC = () => {
             )}
           </Row>
           { publicities && publicities.length > 0 ? (
-            <Pagination 
+            <Pagination
+              hideOnSinglePage
               current={page} 
               total={total}
               onChange={(page, _) => {

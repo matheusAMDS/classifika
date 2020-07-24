@@ -1,7 +1,7 @@
 .card {
   width: 100%;
-/*   max-width: 250px;
- */}
+  margin: 0 auto;
+}
 
 .card img {
   width: 100%;

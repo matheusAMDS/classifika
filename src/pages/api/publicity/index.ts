@@ -2,6 +2,7 @@ import nc from 'next-connect'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ObjectId } from 'mongodb'
 import multer from 'multer'
+import cors from 'cors'
 
 import multerConfig from 'config/multer'
 import db from 'middlewares/database'
@@ -35,6 +36,7 @@ const uploader = multer(multerConfig)
 const handler = nc<NextApiRequest, NextApiResponse>()
 
 handler.use(db)
+handler.use(cors())
 
 handler.get<Request, NextApiResponse>(async (req, res) => {
   const category = req.query.category as string
