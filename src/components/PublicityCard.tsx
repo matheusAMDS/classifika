@@ -16,7 +16,7 @@ function daysFromTimestamp(createdAt:number):string {
   else if (daysAgo === 1)
     return 'Ontem'
   else
-    return `Há ${daysAgo.toString()} atrás`
+    return `Há ${daysAgo.toString()} dias atrás`
 }
 
 const PublicityCard:React.FC<Props> = ({ publicity }) => {

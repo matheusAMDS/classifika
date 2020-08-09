@@ -1,17 +1,18 @@
 import { GetStaticPaths, GetStaticProps } from 'next'
-import { useRouter } from 'next/router'
-import { PageHeader, Descriptions, Carousel, Tabs } from 'antd' 
+import { Descriptions, Carousel, Typography, Space } from 'antd' 
 import { ObjectId } from 'mongodb'
 
 import AppLayout from 'components/AppLayout'
 
-import { dbConnection } from 'middlewares/database'
+import { dbConnection } from 'lib/database'
 import { Publicity } from 'services/Publicity'
-import publicityDetails from 'styles/publicity-details.module.css'
+import styles from 'styles/publicity-details.module.css'
 
 interface Props {
   publicity: Publicity;
 }
+
+const { Title, Paragraph, Text } = Typography
 
 export const getStaticPaths:GetStaticPaths = async () => {
   const db = await dbConnection()
@@ -50,49 +51,56 @@ export const getStaticProps:GetStaticProps = async ({ params }) => {
 }
 
 const PublicityDetail:React.FC<Props> = ({ publicity }) => {
-  const router = useRouter()
-
   return (
     <AppLayout title={`Classifika | ${publicity && publicity.title}`}>
       { publicity && (
-        <div className={publicityDetails.container}>
-          <PageHeader
-            ghost={false}
-            onBack={() => router.back()}
-            title={publicity.title}
-            subTitle={publicity.category}
-          >
-            <Descriptions column={3} >
-              <Descriptions.Item label="Publicado por">
-                {publicity.byUser && publicity.byUser.name}
-              </Descriptions.Item>
-              <Descriptions.Item label="Whatsapp">
-                {publicity.whatsapp}
-              </Descriptions.Item>
-              <Descriptions.Item label="Email">
-                {publicity.byUser && publicity.byUser.email}
-              </Descriptions.Item>
-            </Descriptions>
-          </PageHeader>
-          <div className={publicityDetails.main}>
-            <Tabs defaultActiveKey="description">
-              <Tabs.TabPane tab="Descrição" key="description">
-                <p>{publicity.description}</p>
-              </Tabs.TabPane>
-              <Tabs.TabPane tab="Galeria" key="gallery">
-                <Carousel autoplay>
-                {publicity.gallery && publicity.gallery.map((image, index) => (
-                  <img 
-                    key={index}
-                    className={publicityDetails.thumbnail}
-                    src={image}
-                    alt={publicity.title}
-                  />
-                ))}
-                </Carousel>
-              </Tabs.TabPane>
-            </Tabs>
-          </div>
+        <div className={styles.container}>
+          <Space direction="vertical" className={styles.main}>
+            <Typography className={styles.typography}>
+              <Title className={styles.title}>
+                {publicity.title}
+              </Title>
+
+              <Text className={styles.category}>
+                {publicity.category}
+              </Text>
+
+              <Title level={3}>Info</Title>
+              <Descriptions>
+                <Descriptions.Item label="Enviado por">
+                  {publicity.byUser.name}
+                </Descriptions.Item>
+                <Descriptions.Item label="Email">
+                  {publicity.byUser.email}
+                </Descriptions.Item>
+                <Descriptions.Item label="WhatsApp">
+                  {publicity.whatsapp}
+                </Descriptions.Item>
+              </Descriptions>
+
+              <Title level={3}>Descrição</Title>
+              <Paragraph ellipsis={{ rows: 5, expandable: true, symbol: 'ler mais' }}>
+                {publicity.description}
+              </Paragraph>
+
+              { publicity.gallery.length !== 0 && (
+                <>
+                  <Title level={3}>Galeria</Title>
+                  <Carousel autoplay className={styles.carousel}> 
+                    { publicity.gallery.map((image, index) => (
+                      <div key={index}>
+                        <img 
+                          src={image} 
+                          alt={publicity.title} 
+                          className={styles.thumbnail} 
+                        />
+                      </div>      
+                    ))}
+                  </Carousel>
+                </>
+              )}
+            </Typography>
+          </Space>
         </div>
       )}
     </AppLayout>

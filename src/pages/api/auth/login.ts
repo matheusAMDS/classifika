@@ -1,18 +1,16 @@
 import nc from 'next-connect'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextApiResponse } from 'next'
 import bcrypt from 'bcryptjs'
-import cors from 'cors'
 
-import db from 'middlewares/database'
-import { generateToken } from 'middlewares/auth'
-import { Request } from 'middlewares/_types'
+import middlewares from 'lib/middleware'
+import { generateToken } from 'lib/jwt'
+import { Request } from 'lib/ncInterfaces'
 
-const handler = nc<NextApiRequest,NextApiResponse>()
+const handler = nc<Request, NextApiResponse>()
 
-handler.use(db)
-handler.use(cors())
+handler.use(middlewares)
 
-handler.post<Request, NextApiResponse>(async (req, res) => {
+handler.post(async (req, res) => {
   const { email, password } = req.body
 
   let user = await req.db.collection('users').findOne({ email })
@@ -24,8 +22,7 @@ handler.post<Request, NextApiResponse>(async (req, res) => {
     return res.status(403).json({ error: "Wrong password" })
 
   return res.json({
-    token: generateToken(user._id),
-    user
+    token: generateToken(user._id)
   })
 })
 

@@ -21,7 +21,8 @@ export interface NewPublicityData {
   description: string;
   category: string;
   whatsapp: string;
-  thumbnail: File;
+  thumbnail: { originFileObj: File; };
+  gallery: { originFileObj: File; }[];
 }
 
 interface APIResult {
@@ -46,5 +47,28 @@ export function usePublicities(category:string, page:number) {
     total: data && data.total,
     isLoading: !data && !error,
     error
+  }
+}
+
+export async function newPublicity(data: NewPublicityData) {
+  const token = localStorage.getItem('token')
+  const formData = new FormData()
+
+  try {
+    formData.append('title', data.title)
+    formData.append('description', data.description)
+    formData.append('category', data.category)
+    formData.append('thumbnail', data.thumbnail.originFileObj)
+    formData.append('whatsapp', data.whatsapp)
+    data.gallery && 
+    data.gallery.forEach(obj => formData.append('gallery', obj.originFileObj))
+
+    await api.post('/publicity', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+  } catch (error) {
+    console.log(error)
   }
 }

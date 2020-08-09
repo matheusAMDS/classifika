@@ -3,10 +3,6 @@ import Link from 'next/link'
 import Head from 'next/head'
 import { useContext } from 'react'
 
-import Login from 'components/Login'
-import Signup from 'components/Signup'
-import NewPublicity from 'components/NewPublicity'
-
 import layout from 'styles/layout.module.css'
 import { AuthContext } from 'contexts/AuthContext'
 
@@ -17,7 +13,7 @@ interface Props {
 const { Content, Footer, Header } = Layout
 
 const AppLayout:React.FC<Props> = ({ children, title }) => {
-  const { isLogged, logout } = useContext(AuthContext)
+  const Auth = useContext(AuthContext)
 
   return (
     <Layout className={layout.container}>
@@ -46,17 +42,41 @@ const AppLayout:React.FC<Props> = ({ children, title }) => {
         </Menu>
 
         <div>
-          { !isLogged ? (
+          { !Auth.isLogged ? (
             <>
-              <Signup />
-              <Login />
+              <Link href="/signup">
+                <Button 
+                  type="primary" 
+                  className={layout.navbar_actions}
+                >
+                  Cadastrar
+                </Button>
+              </Link>
+              <Link href="/login">
+                <Button 
+                  type="primary"
+                  className={layout.navbar_actions}
+                  ghost
+                >
+                  Entrar
+                </Button>
+              </Link>
             </>
           ) : (
             <>
-              <NewPublicity />
+              <Link href="/publicities/new">
+                <Button 
+                  type="primary" 
+                  className={layout.navbar_actions}
+                >
+                  Publicar
+                </Button>
+              </Link>
               <Button 
-                onClick={logout} 
+                onClick={Auth.logout} 
                 className={layout.navbar_actions}
+                type="primary"
+                ghost
               >
                 Sair
               </Button>

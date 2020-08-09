@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
-import { NextApiResponse as Response } from 'next'
+import { NextApiResponse } from 'next'
 
-import { WithAuthRequest } from 'middlewares/_types'
+import { Request } from 'lib/ncInterfaces'
 
 export interface Decoded {
   id: string;
@@ -10,12 +10,12 @@ export interface Decoded {
 }
 
 export function generateToken(id:string) {
-  const JWT_SECRET = process.env.JWT_SECRET_KEY
+  const JWT_SECRET = process.env.ACCESS_SECRET_KEY
   
   return jwt.sign({ id }, JWT_SECRET, { expiresIn: '2h' })
 }
 
-export function verifyToken(req:WithAuthRequest, res:Response, next:() => void) {
+export function verifyToken(req:Request, res:NextApiResponse, next:() => void) {
   const auth = req.headers.authorization
 
   if (!auth)
@@ -32,11 +32,22 @@ export function verifyToken(req:WithAuthRequest, res:Response, next:() => void) 
     return res.status(401).json({ error: "It must be a Bearer token" })
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY) as Decoded
+    const decoded = jwt.verify(token, process.env.ACCESS_SECRET_KEY) as Decoded
 
     req.user = decoded.id
     next()
   } catch (error) {
     console.log(error)
+  }
+}
+
+export function verifyIsExpired(token:string) {
+  try {
+    const decoded = jwt.decode(token) as Decoded
+    const timeNow = Math.floor(Date.now() / 1000)
+
+    return !(decoded.exp > timeNow)
+  } catch (error) {
+    return null
   }
 }

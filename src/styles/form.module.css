@@ -1,0 +1,18 @@
+.title {
+  text-align: center;
+}
+
+.link {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.form {
+  width: 100%;
+  max-width: 700px;
+  margin: 24px auto 0 auto;
+}
+
+.submit {
+  width: 100%;
+}

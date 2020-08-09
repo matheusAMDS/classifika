@@ -1,13 +1,12 @@
 import nc from 'next-connect'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextApiResponse } from 'next'
 import { ObjectId } from 'mongodb'
 import multer from 'multer'
-import cors from 'cors'
 
+import middlewares from 'lib/middleware'
 import multerConfig from 'config/multer'
-import db from 'middlewares/database'
-import { WithAuthRequest, Request } from 'middlewares/_types'
-import { verifyToken } from 'middlewares/auth'
+import { UploadRequest, Request } from 'lib/ncInterfaces'
+import { verifyToken } from 'lib/jwt'
 
 interface User {
   _id: string;
@@ -33,12 +32,11 @@ export const config = {
 }
 
 const uploader = multer(multerConfig)
-const handler = nc<NextApiRequest, NextApiResponse>()
+const handler = nc<Request, NextApiResponse>()
 
-handler.use(db)
-handler.use(cors())
+handler.use(middlewares)
 
-handler.get<Request, NextApiResponse>(async (req, res) => {
+handler.get(async (req, res) => {
   const category = req.query.category as string
   const page = Number(req.query.page) || 1
   const totalDocuments = await req.db
@@ -81,7 +79,7 @@ handler.use(uploader.fields([
   { name: 'gallery', maxCount: 8 }
 ]))
 
-handler.post<WithAuthRequest, NextApiResponse>(async (req, res) => {
+handler.post<UploadRequest, NextApiResponse>(async (req, res) => {
   const userId = req.user
   const { title, description, whatsapp, category } = req.body
   const gallery = req.files['gallery']

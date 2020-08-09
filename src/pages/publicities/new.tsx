@@ -1,72 +1,64 @@
-import { Input, Select, Upload, Form, Button } from 'antd'
+import { Select, Upload, Form, Button, Typography } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
+import { useRouter } from 'next/router'
 
-import ModalForm from 'components/ModalForm'
+import AppLayout from 'components/AppLayout'
+import Input from 'components/Input'
 
-import api from 'services/api'
-import layout from 'styles/layout.module.css'
+import { newPublicity, NewPublicityData } from 'services/Publicity'
+import styles from 'styles/form.module.css'
 
+const { Title } = Typography
 const { Option } = Select
 
 const NewPublicity:React.FC = () => {
+  const router = useRouter()
   const [ form ] = Form.useForm()
 
-  const handleSubmit = async () => {
-    const token = localStorage.getItem('token')
+  const onFinish = async () => {
     const data = await form.validateFields()
-    const formData = new FormData()
+    
+    await newPublicity(data as NewPublicityData)
+    router.push('/')
+  }
 
-    formData.append('title', data.title)
-    formData.append('description', data.description)
-    formData.append('category', data.category)
-    formData.append('thumbnail', data.thumbnail.originFileObj)
-    formData.append('whatsapp', data.whatsapp)
-    data.gallery && 
-    data.gallery.forEach(obj => formData.append('gallery', obj.originFileObj))
-
-    try {
-      await api.post('/publicity', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-    } catch (error) {
-      console.log(error)
-    }
+  const onFailed = () => {
+    alert('OPSIE')
+    form.resetFields()
   }
 
   return (
-    <ModalForm
-      label="Anunciar"
-      title="Anuncie"
-      type="primary"
-      handleSubmit={handleSubmit}
-      className={layout.navbar_actions}
-      closeAfterSubmit
-      width="750px"
-    >
+    <AppLayout title="Publicar">
+      <Title className={styles.title}>Publicar</Title>
+
       <Form
         form={form}
-        wrapperCol={{ span: 24, style: { margin: '0 auto' } }}
+        className={styles.form}
+        layout="vertical"
+        onFinish={onFinish}
+        onFinishFailed={onFailed}
       >
         <Form.Item 
           name="title"
           rules={[{ required: true }]}
         >
-          <Input type="text" placeholder="Título" />
+          <Input type="text" label="Título" />
         </Form.Item>
+        
         <Form.Item 
           name="description"
           rules={[{ required: true }]}
         >
-          <Input.TextArea placeholder="Descrição" rows={20} />
+          <Input type="textarea" label="Descrição" />
         </Form.Item>
+        
         <Form.Item 
           name="category"
           rules={[{ required: true }]}
         >
           <Select
             placeholder="Selecione a categoria correspondente"
+            size="large"
             allowClear
           >
             <Option value="Veículo">Veículo</Option>
@@ -76,6 +68,7 @@ const NewPublicity:React.FC = () => {
             <Option value="Outros">Outros</Option>
           </Select>
         </Form.Item>
+        
         <Form.Item 
           name="thumbnail"
           rules={[{ required: false }]}
@@ -88,6 +81,7 @@ const NewPublicity:React.FC = () => {
             </Button>
           </Upload>
         </Form.Item>
+        
         <Form.Item
           name="gallery"
           rules={[{ required: false }]}
@@ -100,14 +94,26 @@ const NewPublicity:React.FC = () => {
             </Button>
           </Upload>
         </Form.Item>
+        
         <Form.Item 
           name="whatsapp"
           rules={[{ required: true }]}
         >
-          <Input type="text" placeholder="Whatsapp" />
+          <Input type="text" label="Whatsapp" />
+        </Form.Item>
+
+        <Form.Item>
+          <Button
+            className={styles.submit}
+            type="primary" 
+            htmlType="submit"
+            size="large"
+          >
+            Publicar
+          </Button>
         </Form.Item>
       </Form>
-    </ModalForm>
+    </AppLayout>
   )
 }
 

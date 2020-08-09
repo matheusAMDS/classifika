@@ -1,56 +1,48 @@
-import { createContext, useState, Dispatch, SetStateAction } from 'react'
-import jwt from 'jsonwebtoken'
+import { createContext, useState } from 'react'
 
-import { Decoded } from 'middlewares/auth'
+import { verifyIsExpired } from 'lib/jwt'
+import Auth, { LoginParams, SignUpParams } from 'services/Auth'
 
-interface Auth {
+interface AuthContext {
   isLogged: boolean;
-  setIsLogged: Dispatch<SetStateAction<boolean>>;
+  login: (params:LoginParams) => Promise<void>;
+  signup: (params:SignUpParams) => Promise<void>;
   getToken: () => string|null;
-  setToken: (token:string) => void;
   logout: () => void;
 }
 
-export const AuthContext = createContext<Auth>({
-  isLogged: undefined, 
-  setIsLogged: undefined,
-  getToken: undefined,
-  setToken: undefined,
-  logout: undefined
-})
+function verifyPersistedAuth() {
+  const tokenPersisted = localStorage.getItem('token')
+
+  if (tokenPersisted !== null)
+    return !verifyIsExpired(tokenPersisted)
+
+  return false
+}
+
+export const AuthContext = createContext<AuthContext>({} as AuthContext)
 
 export const AuthProvider:React.FC = ({ children }) => {
-  const tokenPersisted = localStorage.getItem('token')
-  let authPersisted
-  
-  if (tokenPersisted !== null) {
-    try {
-      const decoded = jwt.decode(tokenPersisted) as Decoded
-      const timeNow = Math.floor(Date.now() / 1000)
-      
-      authPersisted = decoded.exp > timeNow
-      
-      if (!authPersisted) {
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-      }
-    } catch (error) {
-      if (error.name === "TokenExpiredError")
-        authPersisted = null
-    }
-  }
-    
-  const [ isLogged, setIsLogged ] = useState(authPersisted)
+  const [ isLogged, setIsLogged ] = useState(verifyPersistedAuth())
 
   return (
     <AuthContext.Provider value={{ 
-      isLogged, 
-      setIsLogged,
+      isLogged,
       getToken: () => isLogged ? localStorage.getItem('token') : null,
-      setToken: (token:string) => localStorage.setItem('token', token),
+      login: async data => {
+        const response = await Auth.login(data)
+    
+        setIsLogged(true)
+        localStorage.setItem('token', response.token)
+      },
+      signup: async data => {
+        const response = await Auth.signup(data)
+    
+        setIsLogged(true)
+        localStorage.setItem('token', response.token)
+      },
       logout: () => {
         localStorage.removeItem('token')
-        localStorage.removeItem('user')
         setIsLogged(false)
       }
     }}>

@@ -1,14 +1,30 @@
 .container {
   width: 100%;
-  max-width: 800px;
+  min-height: 60vh;
+  max-width: 850px;
   margin: 0 auto;
+  background-color: white;
+}
+
+.typography h1 {
+  margin-bottom: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 24px;
+}
+
+.category {
+  color: gray;
+  font-size: 20px;
 }
 
 .thumbnail {
   display: block;
   max-width: 100%;
   height: auto;
-  max-height: 450px;
+  max-height: 400px;
   margin: 0 auto;
 }
 
@@ -17,4 +33,10 @@
   padding: 16px 24px;
   margin-top: 5px;
   width: 100%;
+}
+
+.carousel {
+  width: 100%;
+  background-color: black;
+  padding-top: 5px;
 }

@@ -66,7 +66,7 @@ const Home:React.FC = () => {
           <Title level={2}>
             {mapKeyToPlural(category) || "Todos os anúncios"}
           </Title>
-          <Row gutter={[16, 10]}>
+          <Row gutter={[16, 16]}>
             { isLoading ? <Spin size="large" className={home.spinner} /> : (
               publicities && (
               publicities.length === 0
@@ -79,27 +79,32 @@ const Home:React.FC = () => {
                     href='/publicities/[id]' 
                     as={`/publicities/${publicity._id}`}
                   >
-                    <Col xs={20} sm={12} md={12} lg={8} xl={8} xxl={6} className={home.col} >
+                    <Col className={home.col} >
                       <PublicityCard publicity={publicity} />
                     </Col>
                   </Link>
                 ))
               )
             )}
+            <Col span={24}>
+              { publicities && publicities.length > 0 ? (
+                <Pagination
+                  style={{ flexGrow: 1 }}
+                  hideOnSinglePage
+                  size="default"
+                  current={page} 
+                  total={total}
+                  onChange={(page, _) => {
+                    if (category)
+                      router.push(`/?category=${category}&page=${page}`)
+                    else 
+                      router.push(`/?page=${page}`)
+                  }}
+                />
+              ) : null}
+            </Col>
           </Row>
-          { publicities && publicities.length > 0 ? (
-            <Pagination
-              hideOnSinglePage
-              current={page} 
-              total={total}
-              onChange={(page, _) => {
-                if (category)
-                  router.push(`/?category=${category}&page=${page}`)
-                else 
-                  router.push(`/?page=${page}`)
-              }}
-            />
-          ) : null}
+          
         </Content>     
       </Layout>
     </AppLayout>

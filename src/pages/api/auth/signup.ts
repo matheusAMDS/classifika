@@ -1,19 +1,16 @@
 import nc from 'next-connect'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextApiResponse } from 'next'
 import bcrypt from 'bcryptjs'
-import cors from 'cors'
 
-import db from 'middlewares/database'
-import { Request } from 'middlewares/_types'
+import { Request } from 'lib/ncInterfaces'
+import middlewares from 'lib/middleware'
+import { generateToken } from 'lib/jwt'
 
-import { generateToken } from 'middlewares/auth'
+const handler = nc<Request,NextApiResponse>()
 
-const handler = nc<NextApiRequest,NextApiResponse>()
+handler.use(middlewares)
 
-handler.use(db)
-handler.use(cors())
-
-handler.post<Request, NextApiResponse>(async (req, res) => {
+handler.post(async (req, res) => {
   const { name, email, password } = req.body
 
   let user = await req.db.collection('users').findOne({ email })
@@ -21,17 +18,14 @@ handler.post<Request, NextApiResponse>(async (req, res) => {
   if (user)
     return res.status(400).json({ error: "Email already registered" })
 
-  user = {
+  await req.db.collection('users').insertOne({
     name,
     email,
-    password: bcrypt.hashSync(password, 10),
-    createdAt: new Date()
-  }
-  await req.db.collection('users').insertOne(user)
+    password: bcrypt.hashSync(password, 10)
+  })
 
   return res.json({
-    token: generateToken(user._id),
-    user
+    token: generateToken(user._id)
   })
 })
 
