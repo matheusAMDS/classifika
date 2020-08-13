@@ -83,7 +83,7 @@ const PublicityDetail:React.FC<Props> = ({ publicity }) => {
                 {publicity.description}
               </Paragraph>
 
-              { publicity.gallery.length !== 0 && (
+              { publicity.gallery && publicity.gallery.length !== 0 && (
                 <>
                   <Title level={3}>Galeria</Title>
                   <Carousel autoplay className={styles.carousel}> 
