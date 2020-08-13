@@ -12,7 +12,7 @@ const App:React.FC<AppProps> = ({ Component, pageProps }) => {
     <AuthProvider>
       <Component {...pageProps} />
     </AuthProvider>
-  )
+  ) 
 }
 
 export default App

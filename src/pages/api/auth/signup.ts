@@ -18,15 +18,15 @@ handler.post(async (req, res) => {
   if (user)
     return res.status(400).json({ error: "Email already registered" })
 
-  await req.db.collection('users').insertOne({
+  const result = await req.db.collection('users').insertOne({
     name,
     email,
     password: bcrypt.hashSync(password, 10)
-  })
+  }) 
 
-  return res.json({
-    token: generateToken(user._id)
-  })
+  const token = generateToken({ id: result.insertedId }, 'access')
+
+  return res.json({ token })
 })
 
 export default handler

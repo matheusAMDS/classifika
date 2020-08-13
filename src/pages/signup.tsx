@@ -19,15 +19,14 @@ const SignUp: React.FC = () => {
   const Auth = useContext(AuthContext)
 
   const onFinish = async () => {
-    const data = await form.validateFields()
+    try {
+      const data = await form.validateFields()
 
-    await Auth.signup(data as SignUpParams)
-    router.push('/')
-  }
-
-  const onFailed = () => {
-    alert('opsie')
-    form.resetFields()
+      await Auth.signup(data as SignUpParams)
+      router.push('/')
+    } catch (error) {
+      alert(error.message)
+    }
   }
 
   return (
@@ -38,7 +37,6 @@ const SignUp: React.FC = () => {
         form={form}
         layout="vertical"
         onFinish={onFinish}
-        onFinishFailed={onFailed}
       >
         <Form.Item name="name">
           <Input

@@ -17,23 +17,15 @@ interface SessionResponse {
 
 class Auth {
   async login(params:LoginParams) {
-    try {
-      const response = await api.post<SessionResponse>('/auth/login', params)
-  
-      return response.data
-    } catch (error) {
-      console.log(error)
-    }
+    const response = await api.post<SessionResponse>('/auth/login', params)
+
+    return response.data
   }
   
   async signup(params:SignUpParams) {
-    try {
-      const response = await api.post<SessionResponse>('/auth/login', params)
-  
-      return response.data
-    } catch (error) {
-      console.log(error)
-    }
+    const response = await api.post<SessionResponse>('/auth/signup', params)
+
+    return response.data
   }
 }
 

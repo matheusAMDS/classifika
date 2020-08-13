@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken'
 import { NextApiResponse } from 'next'
 
 import { Request } from 'lib/ncInterfaces'
+import authConfig from 'config/auth'
 
 export interface Decoded {
   id: string;
@@ -9,10 +10,10 @@ export interface Decoded {
   exp: number;
 }
 
-export function generateToken(id:string) {
-  const JWT_SECRET = process.env.ACCESS_SECRET_KEY
-  
-  return jwt.sign({ id }, JWT_SECRET, { expiresIn: '2h' })
+export function generateToken(payload: any, type: 'access' | 'email') {
+  const { SECRET, options } = authConfig[type]
+
+  return jwt.sign(payload, SECRET, options)
 }
 
 export function verifyToken(req:Request, res:NextApiResponse, next:() => void) {

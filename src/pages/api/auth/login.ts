@@ -21,9 +21,9 @@ handler.post(async (req, res) => {
   if (!await bcrypt.compare(password, user.password))
     return res.status(403).json({ error: "Wrong password" })
 
-  return res.json({
-    token: generateToken(user._id)
-  })
+  const token = generateToken({ id: user._id }, 'access')
+
+  return res.json({ token })
 })
 
 export default handler

@@ -2,14 +2,16 @@ import { Form, Typography, Button } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { LockOutlined, MailOutlined } from '@ant-design/icons'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 
 import AppLayout from 'components/AppLayout'
 import Input from 'components/Input'
+import ModalButton from 'components/ModalButton'
 
 import styles from 'styles/form.module.css'
 import { AuthContext } from 'contexts/AuthContext'
 import { LoginParams } from 'services/Auth'
+import api from 'services/api'
 
 const { Title } = Typography
 
@@ -18,16 +20,25 @@ const Login: React.FC = () => {
   const [ form ] = Form.useForm()
   const Auth = useContext(AuthContext)
 
-  const onFinish = async () => {
-    const data = await form.validateFields()
+  const [ forgotPassEmail, setForgotPassEmail ] = useState('')
 
-    await Auth.login(data as LoginParams)
-    router.push('/')
+  const handleLoginSubmit = async () => {
+    try {
+      const data = await form.validateFields()
+    
+      await Auth.login(data as LoginParams)
+      router.push('/')
+    } catch (error) {
+      alert(error.message)
+    }
   }
 
-  const onFailed = () => {
-    alert('opsie')
-    form.resetFields()
+  const handleEmailForgotPassword = async () => {
+    try {
+      await api.post('/auth/forgotpassword', { email: forgotPassEmail })
+    } catch (error) {
+      alert(error.message)
+    }
   }
 
   return (
@@ -37,8 +48,7 @@ const Login: React.FC = () => {
         className={styles.form}
         form={form}
         layout="vertical"
-        onFinish={onFinish}
-        onFinishFailed={onFailed}
+        onFinish={handleLoginSubmit}
       >
         <Form.Item name="email">
           <Input
@@ -67,10 +77,21 @@ const Login: React.FC = () => {
           </Button>
         </Form.Item>
 
-        <Link href="/forgotpassword">
-          <a className={styles.link}>Esqueci minha senha</a>
-        </Link>
-
+        <ModalButton
+          buttonLabel="Esqueci minha senha"
+          type="link"
+          onOk={handleEmailForgotPassword}
+          onOkLabel="Enviar email"
+          title="Redefinir senha"
+        >
+          <Input
+            label="Email"
+            type="email"
+            icon={<MailOutlined />}
+            onChange={setForgotPassEmail} 
+          />
+        </ModalButton>
+        
         <Link href="/signup">
           <a className={styles.link}>Ainda não estou cadastrado</a>
         </Link>

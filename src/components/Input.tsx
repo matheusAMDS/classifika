@@ -1,5 +1,5 @@
 import { Input } from 'antd'
-import { ReactNode } from 'react'
+import { ReactNode, Dispatch, SetStateAction } from 'react'
 
 import styles from 'styles/input.module.css'
 
@@ -7,9 +7,10 @@ interface Props {
   type: string;
   label: string;
   icon?: ReactNode; 
+  onChange?: Dispatch<SetStateAction<string>>;
 }
 
-const CustomInput: React.FC<Props> = ({ type, label, icon, ...rest }) => {
+const CustomInput: React.FC<Props> = ({ type, label, icon, onChange }) => {
   if (type === 'password')
     return (
       <Input.Password 
@@ -17,7 +18,7 @@ const CustomInput: React.FC<Props> = ({ type, label, icon, ...rest }) => {
         className={styles.input}
         placeholder={label}
         prefix={icon}
-        { ...rest }
+        onChange={e => onChange(e.target.value)}
       />
     )
   
@@ -27,7 +28,7 @@ const CustomInput: React.FC<Props> = ({ type, label, icon, ...rest }) => {
         className={styles.input}
         placeholder={label}
         rows={15}
-        { ...rest }
+        onChange={e => onChange(e.target.value)}
       />
     )
   
@@ -38,7 +39,7 @@ const CustomInput: React.FC<Props> = ({ type, label, icon, ...rest }) => {
         className={styles.input}
         placeholder={label}
         prefix={icon}
-        { ...rest }
+        onChange={e => onChange(e.target.value)}
       />
     )
 }
